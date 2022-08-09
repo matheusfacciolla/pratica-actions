@@ -1,0 +1,19 @@
+name: PullRequest
+on: [pull_request]
+jobs:
+  PullRequest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Make envfile
+        uses: SpicyPizza/create-envfile@v1
+				#precisamos criar um .env file por que o nosso está no gitignore
+        with:
+          envkey_POSTGRES_USER: "postgres"
+          envkey_POSTGRES_PASSWORD: "postgres"
+          envkey_POSTGRES_DB: "students__tests"
+          envkey_DATABASE_URL: "postgresql://postgres:postgres@db_postgres_github-ci:5432/students__tests"
+          file_name: .env.test
+      - name: Run tests
+        run: docker-compose -f docker-compose-tests.yml run node_app_github-ci npm run test
